@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "auto-music-transcript"
+version = "0.0.1"
+description = "Turn a written music score into singable SATB (Soprano, Alto, Tenor, Bass) audio."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "TBD" }
+authors = [{ name = "auto-music-transcript contributors" }]
+keywords = ["music", "satb", "musicxml", "omr", "midi", "choir", "transcription"]
+
+# Core runtime dependencies. Kept lean for the skeleton stage; the voice-separation
+# prototype will rely on music21 first. Audio synthesis (fluidsynth/ffmpeg) is added later.
+dependencies = [
+    "music21>=9.1",
+]
+
+[project.optional-dependencies]
+# Installed only when working on audio rendering (needs system fluidsynth + a SoundFont).
+audio = [
+    "pyfluidsynth>=1.3",
+    "pydub>=0.25",
+]
+# Developer tooling.
+dev = [
+    "pytest>=7.4",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+amt = "auto_music_transcript.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/alancs92/auto-music-transcript"
+Repository = "https://github.com/alancs92/auto-music-transcript"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
