@@ -25,7 +25,37 @@ The goal is a practice aid: a singer can play their own part, mute the others, s
 
 ## Status
 
-Idea / scoping stage. The pipeline above is a starting point and will be refined.
+Early scaffold. The Python package skeleton and CLI are in place; pipeline
+stages are stubs with defined input/output contracts. Next up: the MusicXML →
+4-part voice-separation prototype.
+
+## Project layout
+
+```
+src/auto_music_transcript/
+  ingest.py       # detect & classify input (MusicXML / MIDI / PDF / image)
+  recognize.py    # OMR for rendered scores (stub)
+  parse.py        # symbolic notation -> score object (stub)
+  voices.py       # score -> Soprano/Alto/Tenor/Bass streams (stub)
+  synthesize.py   # SATB -> per-part + mix MIDI/audio (stub)
+  pipeline.py     # wires the stages together
+  cli.py          # `amt` command-line entry point
+tests/            # unit tests for the stages that work today
+```
+
+## Development
+
+```bash
+# Editable install with dev + (optional) audio extras
+python -m pip install -e ".[dev]"
+
+# Run the test suite
+pytest
+
+# Try the CLI (classifies input and reports routing; stages are stubs)
+amt path/to/score.musicxml -o output/
+amt --version
+```
 
 ## Known hard parts
 
@@ -35,7 +65,8 @@ Idea / scoping stage. The pipeline above is a starting point and will be refined
 
 ## Roadmap (rough)
 
-- [ ] Decide primary input format to support first (likely MusicXML — easiest, skips OMR).
+- [x] Project skeleton: package layout, CLI stub, dependency declarations, tests.
+- [x] Decide primary input format to support first (MusicXML — easiest, skips OMR).
 - [ ] Voice-separation prototype from MusicXML → 4 MIDI tracks.
 - [ ] Per-part audio rendering + combined mix.
 - [ ] Add PDF/image input via OMR.
