@@ -30,12 +30,21 @@ def test_unknown_format_errors(tmp_path, capsys):
     assert "unrecognised" in capsys.readouterr().err.lower()
 
 
-def test_known_format_routes_then_reports_unimplemented(tmp_path, capsys):
-    # A recognised input should classify and route, then exit 1 because the
-    # pipeline stages are still stubs.
-    f = tmp_path / "score.musicxml"
-    f.write_text("<score/>")
-    assert main([str(f), "-o", str(tmp_path / "out")]) == 1
+def test_musicxml_runs_end_to_end(satb_open_path, tmp_path, capsys):
+    # A real MusicXML score now flows all the way to MIDI outputs.
+    out = tmp_path / "out"
+    assert main([str(satb_open_path), "-o", str(out)]) == 0
     captured = capsys.readouterr()
     assert "musicxml" in captured.out.lower()
+    assert "soprano" in captured.out.lower()
+    assert (out / "mix.mid").exists()
+
+
+def test_pdf_input_reports_omr_unimplemented(tmp_path, capsys):
+    # The OMR stage is still a stub, so PDF input exits 1 with a clear message.
+    f = tmp_path / "scan.pdf"
+    f.write_bytes(b"%PDF-1.4 fake")
+    assert main([str(f), "-o", str(tmp_path / "out")]) == 1
+    captured = capsys.readouterr()
+    assert "omr" in captured.out.lower()  # routing line mentions OMR
     assert "not implemented" in captured.err.lower()

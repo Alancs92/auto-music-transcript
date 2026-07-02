@@ -18,6 +18,9 @@ from .voices import SeparatedVoices
 def render_midi(voices: SeparatedVoices, out_dir: str | Path) -> dict[str, Path]:
     """Render each SATB voice to a per-part MIDI file plus a combined mix.
 
+    Writes ``soprano.mid``, ``alto.mid``, ``tenor.mid``, ``bass.mid`` (one track
+    each) and ``mix.mid`` (all four parts together).
+
     Args:
         voices: The separated SATB streams.
         out_dir: Directory to write the MIDI files into.
@@ -25,10 +28,29 @@ def render_midi(voices: SeparatedVoices, out_dir: str | Path) -> dict[str, Path]
     Returns:
         Mapping of output label (e.g. ``"soprano"``, ``"mix"``) to file path.
     """
-    raise NotImplementedError(
-        "MIDI rendering is not implemented yet. Planned: write one .mid per "
-        "voice via music21, plus a combined 4-track mix."
-    )
+    import copy
+
+    from music21 import stream
+
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    outputs: dict[str, Path] = {}
+    parts = voices.as_dict()
+
+    for voice, part in parts.items():
+        fp = out_dir / f"{voice.value}.mid"
+        part.write("midi", fp=str(fp))
+        outputs[voice.value] = fp
+
+    mix = stream.Score()
+    for part in parts.values():
+        mix.insert(0, copy.deepcopy(part))
+    mix_fp = out_dir / "mix.mid"
+    mix.write("midi", fp=str(mix_fp))
+    outputs["mix"] = mix_fp
+
+    return outputs
 
 
 def render_audio(voices: SeparatedVoices, out_dir: str | Path) -> dict[str, Path]:

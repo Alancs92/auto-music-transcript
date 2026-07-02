@@ -69,6 +69,9 @@ def main(argv: list[str] | None = None) -> int:
     except NotImplementedError as exc:
         print(f"\nPipeline stage not implemented yet:\n  {exc}", file=sys.stderr)
         return 1
+    except ValueError as exc:
+        print(f"\nerror: {exc}", file=sys.stderr)
+        return 1
 
     print(f"Done. Outputs written to {args.out_dir}:")
     for label, path in result.outputs.items():

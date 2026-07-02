@@ -25,9 +25,13 @@ The goal is a practice aid: a singer can play their own part, mute the others, s
 
 ## Status
 
-Early scaffold. The Python package skeleton and CLI are in place; pipeline
-stages are stubs with defined input/output contracts. Next up: the MusicXML →
-4-part voice-separation prototype.
+Working MusicXML path. The pipeline parses a MusicXML score, separates it into
+four SATB voices (open or closed score), and renders per-part MIDI files plus a
+combined mix. OMR (PDF/image input) and audio (WAV) rendering remain stubs.
+
+```bash
+amt path/to/score.musicxml -o output/   # -> soprano/alto/tenor/bass.mid + mix.mid
+```
 
 ## Project layout
 
@@ -67,7 +71,7 @@ amt --version
 
 - [x] Project skeleton: package layout, CLI stub, dependency declarations, tests.
 - [x] Decide primary input format to support first (MusicXML — easiest, skips OMR).
-- [ ] Voice-separation prototype from MusicXML → 4 MIDI tracks.
+- [x] Voice-separation prototype from MusicXML → 4 MIDI tracks (+ combined mix).
 - [ ] Per-part audio rendering + combined mix.
 - [ ] Add PDF/image input via OMR.
 - [ ] Add lyric-aware singing synthesis.
